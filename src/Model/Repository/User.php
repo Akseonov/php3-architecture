@@ -8,6 +8,7 @@ use Model\Entity;
 
 class User
 {
+    private $identityMap = [];
     /**
      * Получаем пользователя по идентификатору
      *
@@ -17,7 +18,11 @@ class User
     public function getById(int $id): ?Entity\User
     {
         foreach ($this->getDataFromSource(['id' => $id]) as $user) {
-            return $this->createUser($user);
+            if (!empty($this->identityMap[$id])) {
+                return $this->identityMap[$id];
+            } else {
+                return $this->createUser($user);
+            }
         }
 
         return null;
@@ -33,7 +38,11 @@ class User
     {
         foreach ($this->getDataFromSource(['login' => $login]) as $user) {
             if ($user['login'] === $login) {
-                return $this->createUser($user);
+                if (!empty($this->identityMap[$login])) {
+                    return $this->identityMap[$login];
+                } else {
+                    return $this->createUser($user);
+                }
             }
         }
 
