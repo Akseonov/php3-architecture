@@ -8,6 +8,7 @@ use Model\Entity;
 
 class Product
 {
+    private $identityMap = [];
     /**
      * Поиск продуктов по массиву id
      *
@@ -22,7 +23,12 @@ class Product
 
         $productList = [];
         foreach ($this->getDataFromSource(['id' => $ids]) as $item) {
-            $productList[] = new Entity\Product($item['id'], $item['name'], $item['price']);
+            if (!empty($this->identityMap[$item['id']])) {
+                $productList[] = $this->identityMap[$item['id']];
+            } else {
+                $productList[] = new Entity\Product($item['id'], $item['name'], $item['price']);
+                $this->identityMap[$item['id']] = new Entity\Product($item['id'], $item['name'], $item['price']);;
+            }
         }
 
         return $productList;
@@ -37,7 +43,12 @@ class Product
     {
         $productList = [];
         foreach ($this->getDataFromSource() as $item) {
-            $productList[] = new Entity\Product($item['id'], $item['name'], $item['price']);
+            if (!empty($this->identityMap[$item['id']])) {
+                $productList[] = $this->identityMap[$item['id']];
+            } else {
+                $productList[] = new Entity\Product($item['id'], $item['name'], $item['price']);
+                $this->identityMap[$item['id']] = new Entity\Product($item['id'], $item['name'], $item['price']);;
+            }
         }
 
         return $productList;
